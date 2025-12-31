@@ -17,6 +17,8 @@
     }
 
     *{box-sizing:border-box}
+    html, body { height: 100%; }
+
     body{
       margin:0;
       min-height:100vh;
@@ -25,7 +27,11 @@
       background: radial-gradient(1200px 800px at 20% 15%, #2b1a52 0%, transparent 60%),
                   radial-gradient(900px 700px at 80% 20%, #5a1634 0%, transparent 55%),
                   linear-gradient(160deg, var(--bg1), var(--bg2));
-      overflow:hidden;
+
+      /* Mobilde içerik kesilmesin */
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     /* arka plan parıltı */
@@ -58,6 +64,9 @@
       padding:28px;
       box-shadow: 0 18px 60px rgba(0,0,0,.35);
       backdrop-filter: blur(10px);
+
+      /* Çok uzun olursa mobilde taşmadan okunabilsin */
+      max-width: 760px;
     }
 
     .title{
@@ -65,8 +74,9 @@
       align-items:center;
       gap:12px;
       margin:0 0 8px 0;
-      font-size: clamp(22px, 3vw, 30px);
+      font-size: clamp(20px, 3.4vw, 30px);
       letter-spacing:.2px;
+      flex-wrap: wrap;
     }
     .badge{
       font-size:12px;
@@ -74,11 +84,13 @@
       border:1px solid rgba(255,255,255,.18);
       border-radius:999px;
       color:var(--muted);
+      white-space: nowrap;
     }
     .sub{
       margin:0 0 18px 0;
       color:var(--muted);
       line-height:1.5;
+      font-size: 15px;
     }
 
     .row{
@@ -86,6 +98,7 @@
       gap:10px;
       flex-wrap:wrap;
       margin-top:12px;
+      align-items: stretch;
     }
     input[type="password"]{
       flex:1 1 220px;
@@ -95,7 +108,8 @@
       background: rgba(0,0,0,.18);
       color: var(--text);
       outline:none;
-      font-size:15px;
+      font-size:16px; /* mobilde zoom olmasın diye 16px iyi */
+      min-height: 48px;
     }
     input[type="password"]::placeholder{color: rgba(255,255,255,.45)}
     button{
@@ -108,6 +122,7 @@
       color:#130a14;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
       box-shadow: 0 10px 30px rgba(255,77,125,.18);
+      min-height: 48px;
     }
     button:active{transform: translateY(1px)}
     .hint{
@@ -132,6 +147,7 @@
       background: rgba(0,0,0,.18);
       line-height:1.8;
       font-size:16px;
+      word-break: break-word;
     }
     .letter h2{
       margin:0 0 10px 0;
@@ -175,6 +191,7 @@
       place-items:center;
       background: rgba(255,255,255,.08);
       border:1px solid rgba(255,255,255,.12);
+      flex: 0 0 auto;
     }
 
     /* Açılınca kart anim */
@@ -184,6 +201,26 @@
     @keyframes pop{
       from{transform: scale(.98); opacity:.85}
       to{transform: scale(1); opacity:1}
+    }
+
+    /* ✅ Mobil düzen */
+    @media (max-width: 520px){
+      .wrap{ padding: 14px; }
+      .card{
+        width: 100%;
+        padding: 16px;
+        border-radius: 18px;
+      }
+      .sub{ font-size: 14px; }
+      .hint, .error{ font-size: 12.5px; }
+      .letter{
+        padding: 14px;
+        font-size: 15.5px;
+        line-height: 1.9;
+      }
+      .letter h2{ font-size: 18px; }
+      button{ width: 100%; }
+      input[type="password"]{ width: 100%; }
     }
   </style>
 </head>
@@ -219,7 +256,7 @@
           “Benim yaptığım bir şey, sen gülünce tamamlanıyor, neden sana böyle küçük bir hediye bırakmayayım ki?.”<br><br>
           2026 yılına girerken yanımda olduğun için çoook ama çok mutluyum. Umarım bu yıl; bol kahkaha,
           güzel anılar ve beraberce büyüttüğümüz şeylerle dolu olur. Seni çooooook seviyorum benim en iyi arkadaşım,sırdaşım,müstakbel eşim. <br><br>
-        İyi ki varsın, ömür boyu nice mutlu senelere. 💌
+          İyi ki varsın, ömür boyu nice mutlu senelere. 💌
         </div>
         <div class="sig">— Minik patetesten mutlu dilekler ile sevgili Glubglob'a.</div>
       </div>
@@ -289,7 +326,6 @@
         spawnHeart();
         if (Date.now() - start > HEART_DURATION_MS){
           clearInterval(timer);
-          // bir süre sonra katmanı kapat (ekranda kalanlar kendi animasyonuyla kaybolacak)
           setTimeout(() => heartsLayer.style.display = "none", 2500);
         }
       }, HEART_RATE_MS);
@@ -298,7 +334,6 @@
     function spawnHeart(){
       const heart = document.createElement("div");
       heart.className = "heart";
-      // farklı kalp/emojiler ile tatlı varyasyon
       const choices = ["💗","💖","💘","💝","💞","💕"];
       heart.textContent = choices[Math.floor(Math.random()*choices.length)];
 
@@ -315,12 +350,8 @@
       heart.style.animationDuration = duration + "s";
 
       heartsLayer.appendChild(heart);
-
-      // animasyon bitince DOM'dan sil
       setTimeout(() => heart.remove(), (duration * 1000) + 50);
     }
   </script>
 </body>
 </html>
-
-
